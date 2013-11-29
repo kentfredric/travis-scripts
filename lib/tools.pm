@@ -115,8 +115,8 @@ my $sterile_deployed;
 
 sub deploy_sterile {
   return if $sterile_deployed;
-  cpanm('--skip-satisfied', 'Capture::Tiny');
-  require Capture::Tiny; # load before we oblitterate everything.
+  cpanm( '--skip-satisfied', 'Capture::Tiny' );
+  require Capture::Tiny;    # load before we oblitterate everything.
 
   fixup_sterile();
   for my $key ( keys %Config ) {
