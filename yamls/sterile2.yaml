@@ -34,6 +34,7 @@ before_install:
   - time perl ./maint-travis-ci/branch_reset.pl
   - time perl ./maint-travis-ci/sterilize_env.pl
 install:
+  - time perl ./maint-travis-ci/install_deps_early.pl
   - time perl ./maint-travis-ci/install_deps.pl
 before_script:
   - time perl ./maint-travis-ci/before_script.pl
