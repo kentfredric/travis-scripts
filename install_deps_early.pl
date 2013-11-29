@@ -16,13 +16,15 @@ if ( not env_exists('STERILIZE_ENV') ) {
   exit 0;
 }
 my (@params) = qw[ --quiet --notest --mirror http://cpan.metacpan.org/ --no-man-pages ];
-my $branch = $ENV{TRAVIS_BRANCH};
+my ($branch) = $ENV{TRAVIS_BRANCH};
+my ($prefix) = './.travis_early_installdeps.';
+
 $branch =~ s{/}{_}g;
-my $depsfile   = './.travis_early_installdeps.' . $branch;
-my $paramsfile = './.travis_early_installdeps.params.' . $branch;
+my ($depsfile)   = ( $prefix . $branch );
+my ($paramsfile) = ( $prefix . 'params.' . $branch );
 
 if ( not( -e $depsfile and -f $depsfile ) ) {
-  diag("\e[31$depsfile does not exist, no extra deps\e[0m");
+  diag("\e[31m$depsfile does not exist, no extra deps\e[0m");
   exit 0;
 }
 
