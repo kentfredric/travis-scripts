@@ -112,7 +112,7 @@ sub deploy_sterile {
   return if $sterile_deployed;
   fixup_sterile();
   for my $key ( keys %Config ) {
-    next unless $key =~ /(bin|prefix|scriptdir|script|lib|arch)exp$/;
+    next unless $key =~ /(lib|arch)exp$/;
     my $value = $Config{$key};
     next unless defined $value;
     next unless length $value;
@@ -123,6 +123,32 @@ sub deploy_sterile {
       $clean_path =~ s{/?$}{/};
       $value =~ s{/?$}{/};
       safe_exec( 'rsync', '-a', '--delete-delay', $clean_path, $value );
+    }
+  }
+  for my $key ( keys %Config ) {
+    next unless $key =~ /(prefix|bin|scriptdir|script)exp$/;
+    my $value = $Config{$key};
+    next unless defined $value;
+    next unless length $value;
+    my $clean_path = '/tmp/perl5-sterile/' . $key;
+    diag("\e[32m?$clean_path\e[0m");
+    if ( -e $clean_path and -d $clean_path ) {
+      diag("\e[31mPre-Cleaning $value\e[0m");
+      my $content = capture_stdout {
+        safe_exec( 'find', $value, '-type', 'f', '-executable', '-print0' );
+      };
+      for my $file ( split /\0/ ) {
+        if ( -B $file ) {
+          diag("\e[33m: Protected\e[34m: $file\e[0m\n");
+          next;
+        }
+        unlink $file;
+        diag("\e[31m: Removed:\e[34m: $file\e[0m\n");
+      }
+      diag("\e[31mRsyncing over $value\e[0m");
+      $clean_path =~ s{/?$}{/};
+      $value =~ s{/?$}{/};
+      safe_exec( 'rsync', '-a', $clean_path, $value );
     }
   }
 }
