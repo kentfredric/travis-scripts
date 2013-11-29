@@ -53,9 +53,11 @@ sub safe_exec {
 
 sub cpanm {
   my (@params) = @_;
+  my $cpanm_lines = 4000;
   my $exit_code = safe_exec_nonfatal( 'cpanm', @params );
   if ( $exit_code != 0 ) {
-    safe_exec( 'tail', '-n', '200', '/home/travis/.cpanm/build.log' );
+    diag("\e[32m cpanm \e[0m failed, showing last \e[31m$cpanm_lines\e[0m lines");
+    safe_exec( 'tail', '-n', $cpanm_lines, '/home/travis/.cpanm/build.log' );
     exit $exit_code;
   }
   return 1;
