@@ -112,7 +112,7 @@ sub deploy_sterile {
   return if $sterile_deployed;
   fixup_sterile();
   for my $key ( keys %Config ) {
-    next unless $key =~ /(lib|arch)exp$/;
+    next unless $key =~ /(bin|prefix|scriptdir|script|lib|arch)exp$/;
     my $value = $Config{$key};
     next unless defined $value;
     next unless length $value;
