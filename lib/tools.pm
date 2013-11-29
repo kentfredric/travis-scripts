@@ -6,6 +6,11 @@ package tools;
 use Cwd qw(cwd);
 use Config;
 
+sub capture_stdout(&) {
+  require Capture::Tiny;
+  goto &Capture::Tiny::capture_stdout;
+}
+
 sub diag {
   my $handle = \*STDERR;
   for (@_) {
@@ -137,7 +142,7 @@ sub deploy_sterile {
       my $content = capture_stdout {
         safe_exec( 'find', $value, '-type', 'f', '-executable', '-print0' );
       };
-      for my $file ( split /\0/ ) {
+      for my $file ( split /\0/, $content ) {
         if ( -B $file ) {
           diag("\e[33m: Protected\e[34m: $file\e[0m\n");
           next;
@@ -166,11 +171,6 @@ sub parse_meta_json {
   $_[0] ||= 'META.json';
   require CPAN::Meta;
   return CPAN::Meta->load_file( $_[0] );
-}
-
-sub capture_stdout(&) {
-  require Capture::Tiny;
-  goto &Capture::Tiny::capture_stdout;
 }
 
 sub import {
