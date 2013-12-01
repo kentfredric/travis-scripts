@@ -147,11 +147,11 @@ sub deploy_sterile {
       };
       for my $file ( split /\0/, $content ) {
         if ( -B $file ) {
-          diag("\e[33m: Protected\e[34m: $file\e[0m\n");
+          diag("\e[33m: Protected\e[34m: $file\e[0m");
           next;
         }
         unlink $file;
-        diag("\e[31m: Removed:\e[34m: $file\e[0m\n");
+        diag("\e[31m: Removed:\e[34m: $file\e[0m");
       }
       diag("\e[31mRsyncing over $value\e[0m");
       $clean_path =~ s{/?$}{/};
