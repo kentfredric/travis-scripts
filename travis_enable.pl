@@ -6,6 +6,9 @@ use Carp;
 use Net::GitHub;
 use Getopt::Lucid ':all';
 use Path::Tiny;
+use FindBin;
+
+my $yamls = path($FindBin::Bin)->child('yamls');
 
 my $opts = Getopt::Lucid->getopt(
     [
@@ -79,7 +82,7 @@ else {
     say "Enabled travis for $repos[0]";
 }
 
-unless ( -f 'travis.yml' ) {
-    path("~/.dzil/master/template/.travis.yml")->copy(".travis.yml");
+unless ( -f '.travis.yml' ) {
+    $yamls->child('sterile2.yaml')->copy('./.travis.yml');
     say "copied .travis.yml to current directory";
 }
