@@ -36,13 +36,21 @@ for my $id ( 0 .. $#ARGV ) {
     $opts->{pushas} = $value;
     next;
   }
+  if ( $field_name eq 'mc' ) {
+    $opts->{has_commit} = 1;
+    $opts->{commit}     = $value;
+    next;
+  }
 }
 if ( not $opts->{push} ) {
   if ( not -d -e $root->child($prefix) ) {
     git_subtree( 'add', '--squash', '--prefix=' . $prefix, $travis, 'master' );
   }
   else {
-    git_subtree( 'pull', '--squash', '-m', 'Synchronise git subtree maint-travis-ci', '--prefix=' . $prefix, $travis, 'master' );
+    my $commitish = 'master';
+    $commitish = $opts->{commit} if $opts->{has_commit};
+    git_subtree( 'pull', '--squash', '-m', 'Synchronise git subtree maint-travis-ci', '--prefix=' . $prefix, $travis,
+      $commitish );
   }
 }
 else {
