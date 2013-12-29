@@ -22,6 +22,7 @@ my $opts = { pushas => 'incomming' };
 
 for my $id ( 0 .. $#ARGV ) {
   my ($field) = $ARGV[$id];
+  next unless $field;
   next unless $field =~ /^-+(.*?$)/;
   my ($field_name) = $1;
   my ($value)      = $ARGV[ $id + 1 ];
@@ -43,12 +44,13 @@ for my $id ( 0 .. $#ARGV ) {
   }
 }
 if ( not $opts->{push} ) {
+  my $commitish = 'master';
+  $commitish = $opts->{commit} if $opts->{has_commit};
+
   if ( not -d -e $root->child($prefix) ) {
-    git_subtree( 'add', '--squash', '--prefix=' . $prefix, $travis, 'master' );
+    git_subtree( 'add', '--squash', '--prefix=' . $prefix, $travis, $commitish );
   }
   else {
-    my $commitish = 'master';
-    $commitish = $opts->{commit} if $opts->{has_commit};
     git_subtree( 'pull', '--squash', '-m', 'Synchronise git subtree maint-travis-ci', '--prefix=' . $prefix, $travis,
       $commitish );
   }
