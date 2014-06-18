@@ -20,24 +20,28 @@ if ( env_is( 'TRAVIS_BRANCH', 'master' ) and env_is( 'TRAVIS_PERL_VERSION', '5.8
   diag("\e[31mscript skipped on 5.8 on master\e[32m, because \@Git, a dependency of \@Author::KENTNL, is unavailble on 5.8\e[0m");
   exit 0;
 }
-if ( env_true('COVERAGE_TESTING') ) {
-  $ENV{PERL5OPT} = env_true('PERL5OPT') ? $ENV{PERL5OPT} . ' ' : '';
-  $ENV{PERL5OPT} .= '-MDevel::Cover ';
-}
+cover_context: {
+  local $ENV{PERL5OPT} = $ENV{PERL5OPT};
 
-if ( env_is( 'TRAVIS_BRANCH', 'master' ) ) {
-  $ENV{HARNESS_OPTIONS} = 'j100:c';
-
-  # $ENV{PERL5OPT}        = '-MDevel::Confess';
-  safe_exec( 'dzil', 'test', '--release' );
-}
-else {
-  my @paths = './t';
-
-  if ( env_true('AUTHOR_TESTING') or env_true('RELEASE_TESTING') ) {
-    push @paths, './xt';
+  if ( env_true('COVERAGE_TESTING') ) {
+    $ENV{PERL5OPT} = env_true('PERL5OPT') ? $ENV{PERL5OPT} . ' ' : '';
+    $ENV{PERL5OPT} .= '-MDevel::Cover ';
   }
-  safe_exec( 'prove', '--blib', '--shuffle', '--color', '--recurse', '--timer', '--jobs', 30, @paths );
+
+  if ( env_is( 'TRAVIS_BRANCH', 'master' ) ) {
+    $ENV{HARNESS_OPTIONS} = 'j100:c';
+
+    # $ENV{PERL5OPT}        = '-MDevel::Confess';
+    safe_exec( 'dzil', 'test', '--release' );
+  }
+  else {
+    my @paths = './t';
+
+    if ( env_true('AUTHOR_TESTING') or env_true('RELEASE_TESTING') ) {
+      push @paths, './xt';
+    }
+    safe_exec( 'prove', '--blib', '--shuffle', '--color', '--recurse', '--timer', '--jobs', 30, @paths );
+  }
 }
 if ( env_true('COVERAGE_TESTING') ) {
   safe_exec('cover');
