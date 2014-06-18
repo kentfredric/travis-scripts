@@ -34,7 +34,7 @@ else {
     push @paths, './xt';
   }
   if ( env_true('COVERAGE_TESTING') ) {
-    safe_exec( 'prove', '--lib', '-MDevel::Cover', '--shuffle', '--color', '--recurse', '--timer', '--jobs', 1, @paths );
+    safe_exec( 'prove', '--exec=perl -Ilib -MDevel::Cover', '--shuffle', '--color', '--recurse', '--timer', '--jobs', 1, @paths );
     safe_exec('cover');
     safe_exec( 'cover', '-report', 'coveralls' );
   }
