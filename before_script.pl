@@ -16,7 +16,7 @@ if ( env_is( 'TRAVIS_BRANCH', 'master' ) ) {
   exit 0;
 }
 else {
-  if ( env_is('COVERAGE_TESTING') ) {
+  if ( env_true('COVERAGE_TESTING') ) {
     diag("\e[31mCOVERAGE_TESTING. Skipping blib creation");
     exit 0;
   }
