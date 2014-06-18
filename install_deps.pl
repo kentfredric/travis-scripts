@@ -67,7 +67,7 @@ if ( env_is( 'TRAVIS_BRANCH', 'master' ) ) {
 else {
   cpanm( @params, '--installdeps', '.' );
   if ( env_true('COVERAGE_TESTING') ) {
-    cpanm( @params, 'Devel::Cover::Report::Coverall' );
+    cpanm( @params, 'Devel::Cover::Report::Coveralls' );
   }
   if ( env_true('AUTHOR_TESTING') or env_true('RELEASE_TESTING') ) {
     my $prereqs = parse_meta_json()->effective_prereqs;
