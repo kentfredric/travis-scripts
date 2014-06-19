@@ -36,7 +36,6 @@ else {
   if ( env_true('COVERAGE_TESTING') ) {
     safe_exec( 'prove', '--exec=perl -Ilib -MDevel::Cover=-coverage,statement,branch,condition,path,subroutine',
       '--shuffle', '--color', '--recurse', '--timer', '--jobs', 1, @paths );
-    safe_exec( 'cover', '+ignore_re=^t/' );
     safe_exec( 'cover', '+ignore_re=^t/', '-report', 'coveralls' );
   }
   else {
