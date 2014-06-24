@@ -179,7 +179,7 @@ sub parse_meta_json {
 sub import {
   my ( $self, @args ) = @_;
 
-  my $caller = [caller]->[0];
+  my $caller = caller;
 
   my $caller_stash = do {
     no strict 'refs';
