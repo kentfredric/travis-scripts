@@ -83,6 +83,6 @@ else {
 }
 
 unless ( -f '.travis.yml' ) {
-  $yamls->child('sterile2.yaml')->copy('./.travis.yml');
+  $yamls->child('sterile3.yaml')->copy('./.travis.yml');
   say "copied .travis.yml to current directory";
 }
