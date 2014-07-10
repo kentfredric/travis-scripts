@@ -63,6 +63,9 @@ if ( env_is( 'TRAVIS_BRANCH', 'master' ) ) {
     }
     cpanm( @params, @parsedeps );
   }
+  if ( env_true('COVERAGE_TESTING') ) {
+    cpanm( @params, 'Devel::Cover::Report::Coveralls' );
+  }
 }
 else {
   cpanm( @params, '--installdeps', '.' );

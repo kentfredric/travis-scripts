@@ -25,7 +25,17 @@ if ( env_is( 'TRAVIS_BRANCH', 'master' ) ) {
   $ENV{HARNESS_OPTIONS} = 'j100:c';
 
   # $ENV{PERL5OPT}        = '-MDevel::Confess';
-  safe_exec( 'dzil', 'test', '--release' );
+  if ( env_true('COVERAGE_TESTING') ) {
+    open my $script, '>', '/tmp/runtest.sh' or die "Cant open test script for write";
+    print {$script} 'execcmd="perl -Ilib -MDevel::Cover=-coverage,statement,branch,condition,path,subroutine"';
+    print {$script} 'prove --exec="$execcmd" --shuffle --color --recurse --timer --jobs 1 "./t" "./xt" || exit $?';
+    print {$script} 'cover +ignore_re=^t/ -report coveralls || exit $?';
+    close $script;
+    safe_exec( 'dzil', 'run', 'bash', '/tmp/runtest.sh' );
+  }
+  else {
+    safe_exec( 'dzil', 'test', '--release' );
+  }
 }
 else {
   my @paths = './t';
