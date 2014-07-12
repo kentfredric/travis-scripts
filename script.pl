@@ -29,9 +29,11 @@ if ( env_is( 'TRAVIS_BRANCH', 'master' ) ) {
     open my $script, '>', '/tmp/runtest.sh' or die "Cant open test script for write";
     print {$script} 'execcmd="perl -Ilib -MDevel::Cover=-coverage,statement,branch,condition,path,subroutine"' . qq[\n];
     print {$script} 'prove --exec="$execcmd" --shuffle --color --recurse --timer --jobs 1 "./t" "./xt" || exit $?' . qq[\n];
-    print {$script} 'cover +ignore_re=^t/ -report coveralls || exit $?' . qq[\n];
+    print {$script} 'cover +ignore_re=^x?t/ -report coveralls || exit $?' . qq[\n];
     close $script;
-    safe_exec( 'dzil', 'run', 'bash', '/tmp/runtest.sh' );
+    ## TODO: Figure out how to do coverage with blib/ existing
+    ## Without it making coverage entirely useless.
+    safe_exec( 'dzil', 'run', '--nobuild', 'bash', '/tmp/runtest.sh' );
   }
   else {
     safe_exec( 'dzil', 'test', '--release' );
