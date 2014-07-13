@@ -46,9 +46,11 @@ else {
     push @paths, './xt';
   }
   if ( env_true('COVERAGE_TESTING') ) {
-    safe_exec( 'prove', '--exec=perl -Ilib -MDevel::Cover=-coverage,statement,branch,condition,path,subroutine',
+    my $exit =
+      safe_exec_nonfatal( 'prove', '--exec=perl -Ilib -MDevel::Cover=-coverage,statement,branch,condition,path,subroutine',
       '--shuffle', '--color', '--recurse', '--timer', '--jobs', 1, @paths );
     safe_exec( 'cover', '+ignore_re=^t/', '-report', 'coveralls' );
+    exit $exit if $exit;
   }
   else {
     safe_exec( 'prove', '--blib', '--shuffle', '--color', '--recurse', '--timer', '--jobs', 30, @paths );
