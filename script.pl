@@ -27,7 +27,8 @@ if ( env_is( 'TRAVIS_BRANCH', 'master' ) ) {
   # $ENV{PERL5OPT}        = '-MDevel::Confess';
   if ( env_true('COVERAGE_TESTING') ) {
     open my $script, '>', '/tmp/runtest.sh' or die "Cant open test script for write";
-    print {$script} 'execcmd="perl -Ilib -MDevel::Cover=-coverage,statement,branch,condition,path,subroutine"' . qq[\n];
+    print {$script} 'libdir="${PWD}/lib"' . qq[\n];
+    print {$script} 'execcmd="perl -I${libdir} -MDevel::Cover=-coverage,statement,branch,condition,path,subroutine"' . qq[\n];
     print {$script} 'prove --exec="$execcmd" --shuffle --color --recurse --timer --jobs 1 "./t" "./xt" || exit $?' . qq[\n];
     print {$script} 'cover +ignore_re=^x?t/ -report coveralls || exit $?' . qq[\n];
     close $script;
