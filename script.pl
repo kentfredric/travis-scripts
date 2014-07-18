@@ -55,7 +55,7 @@ else {
     {
       local $ENV{DEVEL_COVER_OPTIONS} = '-coverage,statement,branch,condition,path,subroutine,-blib,0';
       local $ENV{PERL5LIB} = ( join q[:], $lib, $blib, $archlib, ( split /:/, $ENV{PERL5LIB} || '' ) );
-      $exit = safe_exec_nonfatal( 'prove', '--exec perl -MDevel::Cover',
+      $exit = safe_exec_nonfatal( 'prove', '--exec=perl -MDevel::Cover',
         '--shuffle', '--color', '--recurse', '--timer', '--jobs', 1, @paths );
     }
     safe_exec( 'cover', '+ignore_re=^t/', '-report', 'coveralls' );
