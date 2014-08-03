@@ -24,11 +24,13 @@ my $github_token = _git_config('github.token');
 
 use Net::GitHub;
 my $gh = Net::GitHub->new( access_token => $github_token );
+$github_user = $ENV{GITHUB_ORG} if exists $ENV{GITHUB_ORG};
 my $reponame = "git\@github.com:" . $github_user . "/" . $ARGV[0] . ".git";
 print "Creating $reponame \n";
 
 my $rp = $gh->repos->create(
   {
+    ( exists $ENV{GITHUB_ORG} ? ( org => $ENV{GITHUB_ORG} ) : () ),
     name        => $ARGV[0],
     description => $ARGV[1],
   }
