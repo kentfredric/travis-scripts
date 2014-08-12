@@ -48,6 +48,12 @@ else {
   if ( env_true('AUTHOR_TESTING') or env_true('RELEASE_TESTING') ) {
     push @paths, './xt';
   }
+  my @prove_extra;
+  my @prove_base = ( '--shuffle', '--color', '--recurse', '--timer' );
+  if ( env_true('VERBOSE_TESTING') ) {
+    push @prove_extra, '--verbose';
+  }
+
   if ( env_true('COVERAGE_TESTING') ) {
     my $lib     = Cwd::getcwd() . '/lib';
     my $blib    = Cwd::getcwd() . '/blib/lib';
@@ -55,15 +61,16 @@ else {
 
     my $exit;
     {
-      local $ENV{DEVEL_COVER_OPTIONS} = '-coverage,statement,branch,condition,path,subroutine,-blib,0';
-      local $ENV{PERL5LIB} = ( join q[:], $lib, $blib, $archlib, ( split /:/, $ENV{PERL5LIB} || '' ) );
-      $exit = safe_exec_nonfatal( 'prove', '--exec=perl -MDevel::Cover',
-        '--shuffle', '--color', '--recurse', '--timer', '--jobs', 1, @paths );
+      local $ENV{DEVEL_COVER_OPTIONS}   = '-coverage,statement,branch,condition,path,subroutine,-blib,0';
+      local $ENV{HARNESS_PERL_SWITCHES} = '-MDevel::Cover';
+
+      #      local $ENV{PERL5LIB} = ( join q[:], $lib, $blib, $archlib, ( split /:/, $ENV{PERL5LIB} || '' ) );
+      $exit = safe_exec_nonfatal( 'prove', '-bl', @prove_base, '--jobs', 1, @prove_extra, @paths );
     }
     safe_exec( 'cover', '+ignore_re=^t/', '-report', 'coveralls' );
     exit $exit if $exit;
   }
   else {
-    safe_exec( 'prove', '--blib', '--shuffle', '--color', '--recurse', '--timer', '--jobs', 30, @paths );
+    safe_exec( 'prove', '--blib', @prove_base, '--jobs', 30, @prove_extra, @paths );
   }
 }
