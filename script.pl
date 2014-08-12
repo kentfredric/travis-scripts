@@ -53,6 +53,13 @@ else {
   if ( env_true('VERBOSE_TESTING') ) {
     push @prove_extra, '--verbose';
   }
+  elsif ( env_true('COVERAGE_TESTING') ) {
+
+    # noop
+  }
+  else {
+    push @prove_extra, '--jobs', '30';
+  }
 
   if ( env_true('COVERAGE_TESTING') ) {
     my $lib     = Cwd::getcwd() . '/lib';
@@ -65,12 +72,12 @@ else {
       local $ENV{HARNESS_PERL_SWITCHES} = '-MDevel::Cover';
 
       #      local $ENV{PERL5LIB} = ( join q[:], $lib, $blib, $archlib, ( split /:/, $ENV{PERL5LIB} || '' ) );
-      $exit = safe_exec_nonfatal( 'prove', '-bl', @prove_base, '--jobs', 1, @prove_extra, @paths );
+      $exit = safe_exec_nonfatal( 'prove', '-bl', @prove_base, @prove_extra, @paths );
     }
     safe_exec( 'cover', '+ignore_re=^t/', '-report', 'coveralls' );
     exit $exit if $exit;
   }
   else {
-    safe_exec( 'prove', '--blib', @prove_base, '--jobs', 30, @prove_extra, @paths );
+    safe_exec( 'prove', '--blib', @prove_base, @prove_extra, @paths );
   }
 }
