@@ -29,11 +29,14 @@ if ( env_is( 'TRAVIS_BRANCH', 'master' ) ) {
 
   # $ENV{PERL5OPT}        = '-MDevel::Confess';
   if ( env_true('COVERAGE_TESTING') ) {
+    $ENV{HARNESS_PERL_SWITCHES} = '-MDevel::Cover';
+    $ENV{DEVEL_COVER_OPTIONS}   = '-coverage,statement,branch,condition,path,subroutine,-blib,0';
+    my $verbose = '';
+    if ( env_true('VERBOSE_TESTING') ) {
+      $verbose = ' --verbose';
+    }
     open my $script, '>', '/tmp/runtest.sh' or die "Cant open test script for write";
-    print {$script} 'export PERL5LIB="${PWD}/lib:${PWD}/blib/lib:${PWD}/blib/arch:${PERL5LIB}"' . qq[\n];
-    print {$script} 'export DEVEL_COVER_OPTIONS="-coverage,statement,branch,condition,path,subroutine,-blib,0"' . qq[\n];
-    print {$script} 'prove --exec="perl -MDevel::Cover" --shuffle --color --recurse --timer --jobs 1 "./t" "./xt" || exit $?'
-      . qq[\n];
+    print {$script} 'prove --shuffle --color --recurse --timer ' . $verbose . ' "./t" "./xt" || exit $?' . qq[\n];
     print {$script} 'cover +ignore_re=^x?t/ -report coveralls || exit $?' . qq[\n];
     close $script;
     safe_exec( 'dzil', 'run', 'bash -v /tmp/runtest.sh' );
@@ -62,10 +65,6 @@ else {
   }
 
   if ( env_true('COVERAGE_TESTING') ) {
-    my $lib     = Cwd::getcwd() . '/lib';
-    my $blib    = Cwd::getcwd() . '/blib/lib';
-    my $archlib = Cwd::getcwd() . '/blib/arch';
-
     my $exit;
     {
       local $ENV{DEVEL_COVER_OPTIONS}   = '-coverage,statement,branch,condition,path,subroutine,-blib,0';
