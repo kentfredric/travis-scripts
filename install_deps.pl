@@ -23,6 +23,9 @@ my (@params) = qw[ --quiet --notest --mirror http://cpan.metacpan.org/ --no-man-
 if ( env_true('DEVELOPER_DEPS') ) {
   push @params, '--dev';
 }
+if ( env_true('CONFESS') ) {
+  cpanm( @params, 'Devel::Confess' );
+}
 if ( env_is( 'TRAVIS_BRANCH', 'master' ) ) {
 
   # cpanm( @params, 'Devel::Confess' );

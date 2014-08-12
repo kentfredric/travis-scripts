@@ -21,6 +21,9 @@ if ( env_is( 'TRAVIS_BRANCH', 'master' ) and env_is( 'TRAVIS_PERL_VERSION', '5.8
   exit 0;
 }
 
+if ( env_true('CONFESS') ) {
+  $ENV{PERL5OPT} = ( $ENV{PERL5OPT} || '' ) . ' -MDevel::Confess';
+}
 if ( env_is( 'TRAVIS_BRANCH', 'master' ) ) {
   $ENV{HARNESS_OPTIONS} = 'j100:c';
 
