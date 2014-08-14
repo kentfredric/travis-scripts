@@ -36,7 +36,7 @@ if ( env_is( 'TRAVIS_BRANCH', 'master' ) ) {
       $verbose = ' --verbose';
     }
     open my $script, '>', '/tmp/runtest.sh' or die "Cant open test script for write";
-    print {$script} 'prove --shuffle --color --recurse --timer ' . $verbose . ' "./t" "./xt" || exit $?' . qq[\n];
+    print {$script} 'prove -bl --shuffle --color --recurse --timer ' . $verbose . ' "./t" "./xt" || exit $?' . qq[\n];
     print {$script} 'cover +ignore_re=^x?t/ -report coveralls || exit $?' . qq[\n];
     close $script;
     safe_exec( 'dzil', 'run', 'bash -v /tmp/runtest.sh' );
