@@ -32,11 +32,15 @@ if ( env_is( 'TRAVIS_BRANCH', 'master' ) ) {
     $ENV{HARNESS_PERL_SWITCHES} = '-MDevel::Cover';
     $ENV{DEVEL_COVER_OPTIONS}   = '-coverage,statement,branch,condition,path,subroutine,-blib,0';
     my $verbose = '';
+    my $color   = '';
     if ( env_true('VERBOSE_TESTING') ) {
       $verbose = ' --verbose';
     }
+    unless ( env_is('TRAVIS_PERL_VERSION', '5.8') ) {
+      $color = ' --color';
+    }
     open my $script, '>', '/tmp/runtest.sh' or die "Cant open test script for write";
-    print {$script} 'prove -bl --shuffle --color --recurse --timer ' . $verbose . ' "./t" "./xt" || exit $?' . qq[\n];
+    print {$script} 'prove -bl --shuffle ' . $color . ' --recurse --timer ' . $verbose . ' "./t" "./xt" || exit $?' . qq[\n];
     print {$script} 'cover +ignore_re=^x?t/ -report coveralls || exit $?' . qq[\n];
     close $script;
     safe_exec( 'dzil', 'run', 'bash -v /tmp/runtest.sh' );
@@ -52,7 +56,10 @@ else {
     push @paths, './xt';
   }
   my @prove_extra;
-  my @prove_base = ( '--shuffle', '--color', '--recurse', '--timer' );
+  my @prove_base = ( '--shuffle', '--recurse', '--timer' );
+  unless ( env_is('TRAVIS_PERL_VERSION', '5.8' ) ) {
+    push @prove_base, '--color';
+  }
   if ( env_true('VERBOSE_TESTING') ) {
     push @prove_extra, '--verbose';
   }
@@ -61,7 +68,9 @@ else {
     # noop
   }
   else {
-    push @prove_extra, '--jobs', '30';
+    unless ( env_is( 'TRAVIS_PERL_VERSION', '5.8' ) ) {
+      push @prove_extra, '--jobs', '30';
+    }
   }
 
   if ( env_true('COVERAGE_TESTING') ) {
