@@ -25,7 +25,7 @@ my ($prefix) = './.travis_early_installdeps.';
 $branch =~ s{/}{_}g;
 my ($depsfile)   = ( $prefix . $branch );
 my ($paramsfile) = ( $prefix . 'params.' . $branch );
-safe_exec('perlbrew', 'install-cpanm','-f');
+# safe_exec('perlbrew', 'install-cpanm','-f');
 if ( not( -e $depsfile and -f $depsfile ) ) {
   diag("\e[31m$depsfile does not exist, no extra deps\e[0m");
   exit 0;
