@@ -17,7 +17,7 @@ if ( not env_exists('STERILIZE_ENV') ) {
 }
 
 # See https://github.com/dbsrgits/dbix-class/commit/8c11c33f8
-safe_exec_nonfatal( 'sudo', 'ip6tables', '-I', 'OUTPUT', '-d', 'api.metacpan.org', '-j', 'REJECT' );
+# safe_exec_nonfatal( 'sudo', 'ip6tables', '-I', 'OUTPUT', '-d', 'api.metacpan.org', '-j', 'REJECT' );
 my (@params) = qw[ --quiet --notest --mirror http://cpan.metacpan.org/ --no-man-pages ];
 my ($branch) = $ENV{TRAVIS_BRANCH};
 my ($prefix) = './.travis_early_installdeps.';
