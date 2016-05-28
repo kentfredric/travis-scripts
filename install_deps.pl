@@ -30,7 +30,11 @@ if ( env_is( 'TRAVIS_BRANCH', 'master' ) ) {
 
   # cpanm( @params, 'Devel::Confess' );
   # $ENV{PERL5OPT} = '-MDevel::Confess';
-  cpanm( @params, 'Dist::Zilla', 'Capture::Tiny', 'Pod::Weaver' );
+  if ( "$]" lt "5.014000" ) {
+    cpanm( @params, 'Dist::Zilla~<6.0', 'Capture::Tiny', 'Pod::Weaver' );
+  } else {
+    cpanm( @params, 'Dist::Zilla', 'Capture::Tiny', 'Pod::Weaver' );
+  }
   safe_exec( 'git', 'config', '--global', 'user.email', 'kentfredric+travisci@gmail.com' );
   safe_exec( 'git', 'config', '--global', 'user.name',  'Travis CI ( On behalf of Kent Fredric )' );
 
